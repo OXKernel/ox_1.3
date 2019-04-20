@@ -1,0 +1,87 @@
+I think socket_timer() must re-initialize the PIT. we call ne2k_isr
+with irq 5 now. Let's see if it works.
+
+That didn't work, maybe a locking error.
+We are tracing the ne2k_isr call into __ei_interrupt call,
+and maybe, we need to signal not free the semaphore.
+
+Look at sys_thread_new see where we are installing the offending thread.
+
+we block on line 494 src/lib8390.c during the sem_wait. See what
+we are waiting on.
+
+We are in a loop in the isr, see RGD comment in line 514 netif_dbg("interrupt(isr=%x...
+
+a. Do we get any data?
+b. Do we ever get back to the main thread?
+
+We have two problems:
+a) The driver's isr is not reading any data from the ethernet.
+b) The code is not blocking correctly on wait. We are exiting
+   and not getting any data, all system calls return -1 except
+   for gethostbyname.
+
+
+for(;;); is in lib890.c and test_main.c
+
+A major bug, our io routines are reversed, port value while
+linux is value port. Change this.
+
+Another ne2000 driver :=
+https://searchcode.com/codesearch/view/14305570/
+https://gist.github.com/mafice/1924404
+
+netif_msg_inter :=
+
+http://lxr.free-electrons.com/source/include/linux/netdevice.h#L3422
+
+
+Our driver is:=
+
+egrep "\<in_" 8390.h 8390.c 8390p.c lib8390.c ne2kx86.c  | more
+
+http://www.tldp.org/HOWTO/Ethernet-HOWTO-2.html
+
+ne2k_isr was being polled, we want it called on interrupt.
+
+tcp_connect in tcp.c is failing.
+
+We have no netif configured or setup. Should we setup a default?
+See netif_set_default
+
+we didn't correctly setup the netif_set_up call, we do it now.
+we didn't have the correct callback setup for the tx out, we do it now.
+Its telling us connection established.
+However, the lowlevel driver is saying same error, too much work on interrupt,
+and we are not getting any interrupts. Not sure where we are blocked.
+api_msg.c is where we output the connection established message.
+
+We will most likely need to replace all of that crap linux code
+with ne2000.tmp driver, just see if we can replace the os specific code
+with ours. I don't like the linux driver cause it has too many things
+commented out and too many ifdefs and wannabe OO code.
+
+We seem to get to connection established printk statement,
+and we seem to have some signs of life from the ne2000 driver.
+We put a RGDTODO comment in api_msg.c commenting out the return.
+
+Uses macro TCPIP_APIMSG which calls tcpip_apimsg()
+In api_lib.c there are calls to do_send, do_recv, etc.
+These actually do the send/receive.
+
+We have the wrong behavior and error in line 1370 of src/ap_msg.c
+in do_write, ERR_INPROGRESS is returned. Implying we are not 
+connected yet.
+
+We have NETCONN_CONNECT as our state (value 3), we
+did not yet connect, that is why we fail to send (do_write).
+Is it because we didn't wait correctly for connection ?
+Or there is no response back from the ethernet because there
+is no route to host ?
+
+See netconn_state enum in include/lwip/api.h
+and src/api_msg.c line 1370.
+
+See also netconn_write_partly.
+
+socket_timer calls ne_handler() to poll device.

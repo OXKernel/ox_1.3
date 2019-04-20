@@ -1,0 +1,54 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0] lib8390.c
+// RGD: TODO: This has to be called from our ISR subsystem, and we have to pass
+//			  in the correct device structure. So maybe keep a static pointer
+//			  to the device and pass it in from our code or just use it locally.
+static irqreturn_t __ei_interrupt(int irq, void *dev_id)
+
+[1] ne2kif.c
+// Entry point from ISR in lib8390.c
+void netif_rx(struct pbuf *buf)
+{
+    // RGD: TODO:
+    // Called from lib8390.c
+    // Must call ne2k_rx and correct subsequent calls.
+}
+
+[3] Find out if we need netif_stop_queue and friends. I imagine we do not. But there maybe an
+    equivalent in LWIP.
+	if (ei_local->tx1 && ei_local->tx2)
+		; // netif_stop_queue(dev); // RGD: TODO:
+	else
+		; // netif_start_queue(dev);
+[4] Find out if we need to add a timestamp on the dev and get it via dev_trans_start(dev) (dev->timestamp)
+	int txsr, isr, tickssofar = ktime(0); // RGD: TODO: - dev_trans_start(dev);
+    Review the rest of __ei_tx_timeout
+[5] lib8390.c
+	return (nr_serviced > 0); // RGD: TODO: Should we check if its 1, then propage disable/enable of the IRQ line?
+[6] Review time_after macro use, see if we really have correct time stamps.
+[7] See if we are setting up the device correctly in our calls to ne2kifx86.c and lib8390.c
+    in particular, look at ei_receive()
+[8] Review all of our RGD: TODO: Comments and see if we are good.
+[9] Try running it under PCI device (its not PCI, but see)
+    and then try running it under Vista Bochs.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[1] Implement __ei_interrupt in lib8390.c, have
+    it correctly callback into the driver using
+    ei_receive, and similar methods.
+
+[2] Implement a new driver based on ne2kif.c, using
+    our low-level probe (call top-level probe in our init),
+    and get the data structure representing ei_status (grep ne_block_input)
+    to call back and do low-level reads and writes. Actually,
+    see if lib8390.c does this already, see if it calls block_input, block_output, etc
+    Yes, it does, lib8390.c is the top-level driver, and it calls block_input in
+    ei_receive. See also __ei_start_xmit, as this is the top-level device output
+    routine, see how to call them from a ne2kif.c like device driver.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[1] Implement 8390.c, 8390p.c, lib8390.c
+    and associated headers.
+[2] Call the code from ne2kif.c, replacing
+    with pre-processor defines the AX logic.
+[3] Run it, it should work now... Fingers crossed.

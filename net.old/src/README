@@ -1,0 +1,57 @@
+netconn_connect
+tcpip_apimsg
+ - I think its waiting for do_connected to call sem signal on op_completed,
+   why and from where is do_connected called?
+   Its on the call to tcp_connect from do_connect
+   Its setup on tcp_connect in the tcp_pcb struct as a pointer to connect
+   tcp_connect calls tcp_ouput with pcb structure
+   We do get out of tcp_output, we get do_connect done and established message
+   Go back to tcp_connect, what happens after tcp_output? 
+   do_connect called tcp_connect, and returns to ?
+
+We changed the field, connected to myconnected in
+vi include/lwip/tcp.h to see if the compiler can warn us.
+
+We are called from a macro, TCP_EVENT_CONNECTED in tcp_in.c
+this seems to be that we wait on the event, then when it occurs,
+we are released. The connect requires response from the network,
+which we probably didn't get. Why? Either we can't really
+talk to the device, or that we are not really running the tcp_input()
+thread.
+
+The order is :=
+These functions are generally called in the order (ip_input() ->)
+ * tcp_input() -> * tcp_process() -> tcp_receive() (-> application).
+
+
+We are not getting any interrupt, try polling,
+try setting up a simple perl http server on our local box,
+and then try sending it a message using the ip addresses,
+maybe the router isn't returning anything back and maybe
+its not responding because we gave it a static address
+which is not true.
+
+We currently setup to all the irqs except pit.
+We added the ne2k_isr call to the socket_timer,
+we should then try to create an http server on think,
+and try to connect to it. See if that works.
+
+We need the following qemu:=
+
+qemu-system-i386 -fda vmox.img -net nic,model=ne2k_isa -net user -net dump -redir tcp:7777::7777
+
+Which creates a pass thru server on the local host at port 7777 to forward
+to ox port 7777, if we then connect via httpclient.pl, we send
+a message on the wire.
+
+The qemu-vlan0.pcap file captures this data. But we do not
+get any callback or interrupt to ox to read the data.
+
+tcpdump -nnxr qemu-vlan0.pcap # To read messages on the wire.
+
+There is a poll to call the isr, and it retrieves nothing.
+
+We asked this question on StackOverFlow.com:=
+
+http://stackoverflow.com/questions/37893190/running-lwip-tcp-ip-stack-with-qemu
+

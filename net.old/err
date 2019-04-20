@@ -1,0 +1,50 @@
+src/ne2000.c: In function ‘ether_input’:
+src/ne2000.c:395:21: warning: unused variable ‘msg’ [-Wunused-variable]
+   struct ether_msg *msg;
+                     ^
+src/ne2000.c: In function ‘ne_receive’:
+src/ne2000.c:565:12: warning: implicit declaration of function ‘dev_receive’ [-Wimplicit-function-declaration]
+       rc = dev_receive(ne->devno, p);  // TODO: This is an error, we need to know what the callback is setup to.
+            ^
+src/ne2000.c: In function ‘ne_handler’:
+src/ne2000.c:640:14: error: ‘ne2k_if_netif’ undeclared (first use in this function)
+     ne_start(ne2k_if_netif);
+              ^
+src/ne2000.c:640:14: note: each undeclared identifier is reported only once for each function it appears in
+src/ne2000.c: In function ‘dev_attach’:
+src/ne2000.c:792:25: warning: passing argument 2 of ‘ne_attach’ from incompatible pointer type [-Wincompatible-pointer-types]
+   return ne_attach(dev, &netif->hwaddr); // RGDTODO: This may be ok, test.
+                         ^
+src/ne2000.c:762:5: note: expected ‘struct eth_addr *’ but argument is of type ‘u8_t (*)[6] {aka unsigned char (*)[6]}’
+ int ne_attach(struct dev *dev, struct eth_addr *hwaddr) {
+     ^
+src/ne2000.c: In function ‘ne_setup’:
+src/ne2000.c:822:3: warning: implicit declaration of function ‘memset’ [-Wimplicit-function-declaration]
+   memset(ne, 0, sizeof(struct ne));
+   ^
+src/ne2000.c: In function ‘ne_start’:
+src/ne2000.c:964:22: warning: passing argument 3 of ‘dev_attach’ from incompatible pointer type [-Wincompatible-pointer-types]
+   dev_attach(5,netif,ether_input);
+                      ^
+src/ne2000.c:782:5: note: expected ‘int (*)(struct netif *, struct pbuf *)’ but argument is of type ‘err_t (*)(struct netif *, struct pbuf *) {aka signed char (*)(struct netif *, struct pbuf *)}’
+ int dev_attach(dev_t devno, struct netif *netif, int (*receive)(struct netif *netif, struct pbuf *p))
+     ^
+In file included from src/ne2000.h:5:0,
+                 from src/ne2000.c:9:
+src/ne2000.c: At top level:
+./include/netif/ne2kif.h:31:13: warning: ‘low_level_init’ declared ‘static’ but never defined [-Wunused-function]
+ static void low_level_init(struct netif * netif);
+             ^
+./include/netif/ne2kif.h:32:13: warning: ‘arp_timer’ declared ‘static’ but never defined [-Wunused-function]
+ static void arp_timer(void *arg);
+             ^
+./include/netif/ne2kif.h:34:14: warning: ‘low_level_output’ declared ‘static’ but never defined [-Wunused-function]
+ static err_t low_level_output(struct netif * netif,struct pbuf *p);
+              ^
+./include/netif/ne2kif.h:37:13: warning: ‘ne2k_input’ declared ‘static’ but never defined [-Wunused-function]
+ static void ne2k_input(struct netif *netif,struct pbuf *p);
+             ^
+./include/netif/ne2kif.h:38:22: warning: ‘low_level_input’ declared ‘static’ but never defined [-Wunused-function]
+ static struct pbuf * low_level_input(struct netif *netif);
+                      ^
+make: *** [src/ne2000.o] Error 1

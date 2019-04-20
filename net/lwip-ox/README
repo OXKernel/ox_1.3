@@ -1,0 +1,14 @@
+
+These codes should be implemented for OX.
+We can use the code from eCos here to implement it
+if its possible.
+
+We don't have in OX
+
+mutex,
+message box,
+threads
+etc
+
+We could see how the old implementation did things, but
+I gather that code was wrong.

@@ -1,0 +1,4 @@
+#cc -I./ -I./src -I./include -I./include/ipv4 -I./include/posix -I../include -I../include/ox/ -I../include/ox/lib -E ./src/test_main.c
+#cc -I./ -I./src -I./include -I./include/ipv4 -I./include/posix -I../include -I../include/ox/ -I../include/ox/lib -E ./src/lib8390.c
+#cc -I./ -I./src -I./include -I./include/ipv4 -I./include/posix -I../include -I../include/ox/ -I../include/ox/lib -E ./src/8390.c
+cc -I./ -I./src -I./include -I./include/ipv4 -I./include/posix -I../include -I../include/ox/ -I../include/ox/lib -E ./src/8390p.c

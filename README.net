@@ -1,0 +1,23 @@
+sys_i386.c is all the platform specific code needed
+to run inside OX. He calls free() there, which may
+not work for us, depending on where the memory came from.
+
+Also, we do not need to write our own memory allocator,
+we have one. And it is custom to OX.
+
+Also, he calls schedule(), not sure how that's implemented,
+but if there is a bug, it might be there.
+
+We have our own schedule call, which we need to see if it
+helps our not.
+
+He tried to implement threads by selecting a different entry
+point when the timer interrupt goes off. Not sure how he
+is able to do that, and that code might be bad, not sure.
+
+The code in question is here :=
+
+net.old/src/sys_i386.c
+
+See if we can salvage it and correct it.
+It may have been the culprit in the old code all along.

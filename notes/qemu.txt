@@ -1,0 +1,30 @@
+
+To run and boot from qemu :=
+
+qemu -fda vmox.img -cpu pentium
+
+For net configuration, see
+
+http://www.h7.dion.ne.jp/~qemu-win/HowToNetwork-en.html
+
+qemu -fda vmox.img -net nic,model=ne2k_pci -net user
+qemu -fda vmox.img -net nic,model=ne2k_pci
+qemu-system-i386 -fda vmox.img -netdev user,id=usernet -device ne2k_isa,irq=5,netdev=usernet
+qemu-system-i386 -fda vmox.img -netdev user,id=usernet,net=10.0.0.0/24 -device ne2k_isa,irq=5,netdev=usernet
+# This seems to get us the furthest, but what IRQ ? Port seems 0xc100
+# as we are reading status from the ports and the probe.
+qemu-system-i386 -fda vmox.img -netdev user,id=usernet -device ne2k_pci,netdev=usernet
+
+# This doesn't work.
+#qemu-system-i386 -fda vmox.img -netdev user,id=usernet,net=192.168.1.0/24,dhcpstart=192.168.1.2 -device ne2k_pci,netdev=usernet -net dump
+
+qemu-system-i386 -fda vmox.img -netdev user,id=usernet,net=192.168.1.2 -device ne2k_pci,netdev=usernet -net dump
+
+qemu-system-i386 -fda vmox.img -net nic,model=ne2k_pci -net user -net dump
+qemu-system-i386 -fda vmox.img -net nic,model=ne2k_pci -net user -net=192.168.1.2 -net dump
+
+Compiled LWIP with sockets and dhcp, need dhcp_start on the netif to configure it.
+qemu-system-i386 -fda vmox.img -net nic,model=ne2k_pci -net user -net dump
+
+**This is the one we used for both qemu on Linux and bochs on Vista.**
+qemu-system-i386 -fda vmox.img -netdev user,id=usernet -device ne2k_isa,irq=5,netdev=usernet

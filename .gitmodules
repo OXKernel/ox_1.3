@@ -1,0 +1,3 @@
+[submodule "net2/lwip"]
+	path = net/lwip
+	url = git://git.sv.gnu.org/lwip.git

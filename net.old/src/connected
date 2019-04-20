@@ -1,0 +1,869 @@
+api_msg.c:      buf->port = pcb->protocol;
+api_msg.c:  LWIP_DEBUGF(API_MSG_DEBUG, ("accept_function: newpcb->tate: %s\n", tcp_debug_state_str(newpcb->state)));
+etharp.c:          /* the per-pcb-cached entry is stable and the right one! */
+netif.c:      if (ip_addr_cmp(&(pcb->local_ip), &(netif->ip_addr))
+netif.c:        && !ip_addr_islinklocal(&(pcb->local_ip))
+netif.c:        struct tcp_pcb *next = pcb->next;
+netif.c:        pcb = pcb->next;
+netif.c:    for (lpcb = tcp_listen_pcbs.listen_pcbs; lpcb != NULL; lpcb = lpcb->next) {
+netif.c:      if ((!(ip_addr_isany(&(lpcb->local_ip)))) &&
+netif.c:          (ip_addr_cmp(&(lpcb->local_ip), &(netif->ip_addr)))) {
+netif.c:        ip_addr_set(&(lpcb->local_ip), ipaddr);
+pbuf.c:  for (pcb = tcp_active_pcbs; NULL != pcb; pcb = pcb->next) {
+pbuf.c:    if (NULL != pcb->ooseq) {
+pbuf.c:      tcp_segs_free(pcb->ooseq);
+pbuf.c:      pcb->ooseq = NULL;
+raw.c:    if ((pcb->protocol == proto) &&
+raw.c:        (ip_addr_isany(&pcb->local_ip) ||
+raw.c:         ip_addr_cmp(&(pcb->local_ip), &current_iphdr_dest))) {
+raw.c:        if (pcb->recv != NULL) {
+raw.c:          if (pcb->recv(pcb->recv_arg, pcb, p, ip_current_src_addr()) != 0) {
+raw.c:              prev->next = pcb->next;
+raw.c:              pcb->next = raw_pcbs;
+raw.c:    pcb = pcb->next;
+raw.c:  ip_addr_set(&pcb->local_ip, ipaddr);
+raw.c:  ip_addr_set(&pcb->remote_ip, ipaddr);
+raw.c:  pcb->recv = recv;
+raw.c:  pcb->recv_arg = recv_arg;
+raw.c:  if (ip_addr_isany(&pcb->local_ip)) {
+raw.c:    src_ip = &(pcb->local_ip);
+raw.c:  NETIF_SET_HWADDRHINT(netif, &pcb->addr_hint);
+raw.c:  err = ip_output_if (q, src_ip, ipaddr, pcb->ttl, pcb->tos, pcb->protocol, netif);
+raw.c:  return raw_sendto(pcb, p, &pcb->remote_ip);
+raw.c:        pcb2->next = pcb->next;
+raw.c:    pcb->protocol = proto;
+raw.c:    pcb->ttl = RAW_TTL;
+raw.c:    pcb->next = raw_pcbs;
+tcp.c:  if (rst_on_unacked_data && ((pcb->state == ESTABLISHED) || (pcb->state == CLOSE_WAIT))) {
+tcp.c:    if ((pcb->refused_data != NULL) || (pcb->rcv_wnd != TCP_WND)) {
+tcp.c:      LWIP_ASSERT("pcb->flags & TF_RXCLOSED", pcb->flags & TF_RXCLOSED);
+tcp.c:      tcp_rst(pcb->snd_nxt, pcb->rcv_nxt, &pcb->local_ip, &pcb->remote_ip,
+tcp.c:        pcb->local_port, pcb->remote_port);
+tcp.c:      if (pcb->state == ESTABLISHED) {
+tcp.c:        pcb->state = TIME_WAIT;
+tcp.c:  switch (pcb->state) {
+tcp.c:    if (pcb->local_port != 0) {
+tcp.c:      pcb->state = FIN_WAIT_1;
+tcp.c:      pcb->state = FIN_WAIT_1;
+tcp.c:      pcb->state = LAST_ACK;
+tcp.c:  tcp_debug_print_state(pcb->state);
+tcp.c:  if (pcb->state != LISTEN) {
+tcp.c:    pcb->flags |= TF_RXCLOSED;
+tcp.c:  if (pcb->state == LISTEN) {
+tcp.c:    pcb->flags |= TF_RXCLOSED;
+tcp.c:    if (pcb->refused_data != NULL) {
+tcp.c:      pbuf_free(pcb->refused_data);
+tcp.c:      pcb->refused_data = NULL;
+tcp.c:    switch (pcb->state) {
+tcp.c:  /* pcb->state LISTEN not allowed here */
+tcp.c:    pcb->state != LISTEN);
+tcp.c:  if (pcb->state == TIME_WAIT) {
+tcp.c:    seqno = pcb->snd_nxt;
+tcp.c:    ackno = pcb->rcv_nxt;
+tcp.c:    errf = pcb->errf;
+tcp.c:    errf_arg = pcb->callback_arg;
+tcp.c:    if (pcb->unacked != NULL) {
+tcp.c:      tcp_segs_free(pcb->unacked);
+tcp.c:    if (pcb->unsent != NULL) {
+tcp.c:      tcp_segs_free(pcb->unsent);
+tcp.c:    if (pcb->ooseq != NULL) {
+tcp.c:      tcp_segs_free(pcb->ooseq);
+tcp.c:      tcp_rst(seqno, ackno, &pcb->local_ip, &pcb->remote_ip, pcb->local_port, pcb->remote_port);
+tcp.c:  LWIP_ERROR("tcp_bind: can only bind in state CLOSED", pcb->state == CLOSED, return ERR_VAL);
+tcp.c:    for(cpcb = *tcp_pcb_lists[i]; cpcb != NULL; cpcb = cpcb->next) {
+tcp.c:      if (cpcb->local_port == port) {
+tcp.c:          if (ip_addr_isany(&(cpcb->local_ip)) ||
+tcp.c:              ip_addr_cmp(&(cpcb->local_ip), ipaddr)) {
+tcp.c:    pcb->local_ip = *ipaddr;
+tcp.c:  pcb->local_port = port;
+tcp.c:  LWIP_ERROR("tcp_listen: pcb already connected", pcb->state == CLOSED, return NULL);
+tcp.c:  if (pcb->state == LISTEN) {
+tcp.c:    for(lpcb = tcp_listen_pcbs.listen_pcbs; lpcb != NULL; lpcb = lpcb->next) {
+tcp.c:      if (lpcb->local_port == pcb->local_port) {
+tcp.c:        if (ip_addr_cmp(&lpcb->local_ip, &pcb->local_ip)) {
+tcp.c:  lpcb->callback_arg = pcb->callback_arg;
+tcp.c:  lpcb->local_port = pcb->local_port;
+tcp.c:  lpcb->state = LISTEN;
+tcp.c:  lpcb->prio = pcb->prio;
+tcp.c:  lpcb->so_options = pcb->so_options;
+tcp.c:  lpcb->ttl = pcb->ttl;
+tcp.c:  lpcb->tos = pcb->tos;
+tcp.c:  ip_addr_copy(lpcb->local_ip, pcb->local_ip);
+tcp.c:  if (pcb->local_port != 0) {
+tcp.c:  lpcb->accept = tcp_accept_null;
+tcp.c:  lpcb->accepts_pending = 0;
+tcp.c:  lpcb->backlog = (backlog ? backlog : 1);
+tcp.c:  u32_t new_right_edge = pcb->rcv_nxt + pcb->rcv_wnd;
+tcp.c:  if (TCP_SEQ_GEQ(new_right_edge, pcb->rcv_ann_right_edge + LWIP_MIN((TCP_WND / 2), pcb->mss))) {
+tcp.c:    pcb->rcv_ann_wnd = pcb->rcv_wnd;
+tcp.c:    return new_right_edge - pcb->rcv_ann_right_edge;
+tcp.c:    if (TCP_SEQ_GT(pcb->rcv_nxt, pcb->rcv_ann_right_edge)) {
+tcp.c:      pcb->rcv_ann_wnd = 0;
+tcp.c:      u32_t new_rcv_ann_wnd = pcb->rcv_ann_right_edge - pcb->rcv_nxt;
+tcp.c:      pcb->rcv_ann_wnd = (u16_t)new_rcv_ann_wnd;
+tcp.c:  /* pcb->state LISTEN not allowed here */
+tcp.c:    pcb->state != LISTEN);
+tcp.c:              len <= 0xffff - pcb->rcv_wnd );
+tcp.c:  pcb->rcv_wnd += len;
+tcp.c:  if (pcb->rcv_wnd > TCP_WND) {
+tcp.c:    pcb->rcv_wnd = TCP_WND;
+tcp.c:         len, pcb->rcv_wnd, TCP_WND - pcb->rcv_wnd));
+tcp.c:    for(pcb = *tcp_pcb_lists[i]; pcb != NULL; pcb = pcb->next) {
+tcp.c:      if (pcb->local_port == tcp_port) {
+tcp.c:  LWIP_ERROR("tcp_connect: can only connect from state CLOSED", pcb->state == CLOSED, return ERR_ISCONN);
+tcp.c:    pcb->remote_ip = *ipaddr;
+tcp.c:  pcb->remote_port = port;
+tcp.c:  if (ip_addr_isany(&(pcb->local_ip))) {
+tcp.c:    struct netif *netif = ip_route(&(pcb->remote_ip));
+tcp.c:    ip_addr_copy(pcb->local_ip, netif->ip_addr);
+tcp.c:  old_local_port = pcb->local_port;
+tcp.c:  if (pcb->local_port == 0) {
+tcp.c:    pcb->local_port = tcp_new_port();
+tcp.c:    if (pcb->local_port == 0) {
+tcp.c:      for(cpcb = *tcp_pcb_lists[i]; cpcb != NULL; cpcb = cpcb->next) {
+tcp.c:        if ((cpcb->local_port == pcb->local_port) &&
+tcp.c:            (cpcb->remote_port == port) &&
+tcp.c:            ip_addr_cmp(&cpcb->local_ip, &pcb->local_ip) &&
+tcp.c:            ip_addr_cmp(&cpcb->remote_ip, ipaddr)) {
+tcp.c:  pcb->rcv_nxt = 0;
+tcp.c:  pcb->snd_nxt = iss;
+tcp.c:  pcb->lastack = iss - 1;
+tcp.c:  pcb->snd_lbb = iss - 1;
+tcp.c:  pcb->rcv_wnd = TCP_WND;
+tcp.c:  pcb->rcv_ann_wnd = TCP_WND;
+tcp.c:  pcb->rcv_ann_right_edge = pcb->rcv_nxt;
+tcp.c:  pcb->snd_wnd = TCP_WND;
+tcp.c:  pcb->mss = (TCP_MSS > 536) ? 536 : TCP_MSS;
+tcp.c:  pcb->mss = tcp_eff_send_mss(pcb->mss, ipaddr);
+tcp.c:  pcb->cwnd = 1;
+tcp.c:  pcb->ssthresh = pcb->mss * 10;
+tcp.c:  pcb->connected = connected;
+tcp.c:    pcb->state = SYN_SENT;
+tcp.c:    LWIP_ASSERT("tcp_slowtmr: active pcb->state != CLOSED\n", pcb->state != CLOSED);
+tcp.c:    LWIP_ASSERT("tcp_slowtmr: active pcb->state != LISTEN\n", pcb->state != LISTEN);
+tcp.c:    LWIP_ASSERT("tcp_slowtmr: active pcb->state != TIME-WAIT\n", pcb->state != TIME_WAIT);
+tcp.c:    if (pcb->last_timer == tcp_timer_ctr) {
+tcp.c:      pcb = pcb->next;
+tcp.c:    pcb->last_timer = tcp_timer_ctr;
+tcp.c:    if (pcb->state == SYN_SENT && pcb->nrtx == TCP_SYNMAXRTX) {
+tcp.c:    else if (pcb->nrtx == TCP_MAXRTX) {
+tcp.c:      if (pcb->persist_backoff > 0) {
+tcp.c:        pcb->persist_cnt++;
+tcp.c:        if (pcb->persist_cnt >= tcp_persist_backoff[pcb->persist_backoff-1]) {
+tcp.c:          pcb->persist_cnt = 0;
+tcp.c:          if (pcb->persist_backoff < sizeof(tcp_persist_backoff)) {
+tcp.c:            pcb->persist_backoff++;
+tcp.c:        if(pcb->rtime >= 0) {
+tcp.c:          ++pcb->rtime;
+tcp.c:        if (pcb->unacked != NULL && pcb->rtime >= pcb->rto) {
+tcp.c:                                      " pcb->rto %"S16_F"\n",
+tcp.c:                                      pcb->rtime, pcb->rto));
+tcp.c:          if (pcb->state != SYN_SENT) {
+tcp.c:            pcb->rto = ((pcb->sa >> 3) + pcb->sv) << tcp_backoff[pcb->nrtx];
+tcp.c:          pcb->rtime = 0;
+tcp.c:          eff_wnd = LWIP_MIN(pcb->cwnd, pcb->snd_wnd);
+tcp.c:          pcb->ssthresh = eff_wnd >> 1;
+tcp.c:          if (pcb->ssthresh < (pcb->mss << 1)) {
+tcp.c:            pcb->ssthresh = (pcb->mss << 1);
+tcp.c:          pcb->cwnd = pcb->mss;
+tcp.c:                                       pcb->cwnd, pcb->ssthresh));
+tcp.c:    if (pcb->state == FIN_WAIT_2) {
+tcp.c:      if (pcb->flags & TF_RXCLOSED) {
+tcp.c:        if ((u32_t)(tcp_ticks - pcb->tmr) >
+tcp.c:       ((pcb->state == ESTABLISHED) ||
+tcp.c:        (pcb->state == CLOSE_WAIT))) {
+tcp.c:      if((u32_t)(tcp_ticks - pcb->tmr) >
+tcp.c:         (pcb->keep_idle + TCP_KEEP_DUR(pcb)) / TCP_SLOW_INTERVAL)
+tcp.c:                                ip4_addr1_16(&pcb->remote_ip), ip4_addr2_16(&pcb->remote_ip),
+tcp.c:                                ip4_addr3_16(&pcb->remote_ip), ip4_addr4_16(&pcb->remote_ip)));
+tcp.c:      else if((u32_t)(tcp_ticks - pcb->tmr) > 
+tcp.c:              (pcb->keep_idle + pcb->keep_cnt_sent * TCP_KEEP_INTVL(pcb))
+tcp.c:        pcb->keep_cnt_sent++;
+tcp.c:    if (pcb->ooseq != NULL &&
+tcp.c:        (u32_t)tcp_ticks - pcb->tmr >= pcb->rto * TCP_OOSEQ_TIMEOUT) {
+tcp.c:      tcp_segs_free(pcb->ooseq);
+tcp.c:      pcb->ooseq = NULL;
+tcp.c:    if (pcb->state == SYN_RCVD) {
+tcp.c:      if ((u32_t)(tcp_ticks - pcb->tmr) >
+tcp.c:    if (pcb->state == LAST_ACK) {
+tcp.c:      if ((u32_t)(tcp_ticks - pcb->tmr) > 2 * TCP_MSL / TCP_SLOW_INTERVAL) {
+tcp.c:        prev->next = pcb->next;
+tcp.c:        tcp_active_pcbs = pcb->next;
+tcp.c:        tcp_rst(pcb->snd_nxt, pcb->rcv_nxt, &pcb->local_ip, &pcb->remote_ip,
+tcp.c:          pcb->local_port, pcb->remote_port);
+tcp.c:      err_fn = pcb->errf;
+tcp.c:      err_arg = pcb->callback_arg;
+tcp.c:      pcb = pcb->next;
+tcp.c:      pcb = pcb->next;
+tcp.c:    LWIP_ASSERT("tcp_slowtmr: TIME-WAIT pcb->state == TIME-WAIT", pcb->state == TIME_WAIT);
+tcp.c:    if ((u32_t)(tcp_ticks - pcb->tmr) > 2 * TCP_MSL / TCP_SLOW_INTERVAL) {
+tcp.c:        prev->next = pcb->next;
+tcp.c:        tcp_tw_pcbs = pcb->next;
+tcp.c:      pcb = pcb->next;
+tcp.c:      pcb = pcb->next;
+tcp.c:    if (pcb->last_timer != tcp_timer_ctr) {
+tcp.c:      pcb->last_timer = tcp_timer_ctr;
+tcp.c:      if (pcb->flags & TF_ACK_DELAY) {
+tcp.c:        pcb->flags &= ~(TF_ACK_DELAY | TF_ACK_NOW);
+tcp.c:      next = pcb->next;
+tcp.c:      if (pcb->refused_data != NULL) {
+tcp.c:/** Pass pcb->refused_data to the recv callback */
+tcp.c:  u8_t refused_flags = pcb->refused_data->flags;
+tcp.c:  /* set pcb->refused_data to NULL in case the callback frees it and then
+tcp.c:  struct pbuf *refused_data = pcb->refused_data;
+tcp.c:  pcb->refused_data = NULL;
+tcp.c:      if (pcb->rcv_wnd != TCP_WND) {
+tcp.c:        pcb->rcv_wnd++;
+tcp.c:    pcb->refused_data = refused_data;
+tcp.c:  pcb->prio = prio;
+tcp.c:  for(pcb = tcp_active_pcbs; pcb != NULL; pcb = pcb->next) {
+tcp.c:    if (pcb->prio <= prio &&
+tcp.c:       pcb->prio <= mprio &&
+tcp.c:       (u32_t)(tcp_ticks - pcb->tmr) >= inactivity) {
+tcp.c:      inactivity = tcp_ticks - pcb->tmr;
+tcp.c:      mprio = pcb->prio;
+tcp.c:  for(pcb = tcp_tw_pcbs; pcb != NULL; pcb = pcb->next) {
+tcp.c:    if ((u32_t)(tcp_ticks - pcb->tmr) >= inactivity) {
+tcp.c:      inactivity = tcp_ticks - pcb->tmr;
+tcp.c:    pcb->prio = prio;
+tcp.c:    pcb->snd_buf = TCP_SND_BUF;
+tcp.c:    pcb->snd_queuelen = 0;
+tcp.c:    pcb->rcv_wnd = TCP_WND;
+tcp.c:    pcb->rcv_ann_wnd = TCP_WND;
+tcp.c:    pcb->tos = 0;
+tcp.c:    pcb->ttl = TCP_TTL;
+tcp.c:    pcb->mss = (TCP_MSS > 536) ? 536 : TCP_MSS;
+tcp.c:    pcb->rto = 3000 / TCP_SLOW_INTERVAL;
+tcp.c:    pcb->sa = 0;
+tcp.c:    pcb->sv = 3000 / TCP_SLOW_INTERVAL;
+tcp.c:    pcb->rtime = -1;
+tcp.c:    pcb->cwnd = 1;
+tcp.c:    pcb->snd_wl2 = iss;
+tcp.c:    pcb->snd_nxt = iss;
+tcp.c:    pcb->lastack = iss;
+tcp.c:    pcb->snd_lbb = iss;   
+tcp.c:    pcb->tmr = tcp_ticks;
+tcp.c:    pcb->last_timer = tcp_timer_ctr;
+tcp.c:    pcb->polltmr = 0;
+tcp.c:    pcb->recv = tcp_recv_null;
+tcp.c:    pcb->keep_idle  = TCP_KEEPIDLE_DEFAULT;
+tcp.c:    pcb->keep_intvl = TCP_KEEPINTVL_DEFAULT;
+tcp.c:    pcb->keep_cnt   = TCP_KEEPCNT_DEFAULT;
+tcp.c:    pcb->keep_cnt_sent = 0;
+tcp.c:  pcb->callback_arg = arg;
+tcp.c:  LWIP_ASSERT("invalid socket state for recv callback", pcb->state != LISTEN);
+tcp.c:  pcb->recv = recv;
+tcp.c:  LWIP_ASSERT("invalid socket state for sent callback", pcb->state != LISTEN);
+tcp.c:  pcb->sent = sent;
+tcp.c:  LWIP_ASSERT("invalid socket state for err callback", pcb->state != LISTEN);
+tcp.c:  pcb->errf = err;
+tcp.c:  pcb->accept = accept;
+tcp.c:  LWIP_ASSERT("invalid socket state for poll", pcb->state != LISTEN);
+tcp.c:  pcb->poll = poll;
+tcp.c:  pcb->pollinterval = interval;
+tcp.c: * (pcb->ooseq, pcb->unsent and pcb->unacked are freed).
+tcp.c:  if (pcb->state != CLOSED &&
+tcp.c:     pcb->state != TIME_WAIT &&
+tcp.c:     pcb->state != LISTEN) {
+tcp.c:    if (pcb->state == SYN_RCVD) {
+tcp.c:      LWIP_ASSERT("tcp_pcb_purge: pcb->state == SYN_RCVD but tcp_listen_pcbs is NULL",
+tcp.c:      for (lpcb = tcp_listen_pcbs.listen_pcbs; lpcb != NULL; lpcb = lpcb->next) {
+tcp.c:        if ((lpcb->local_port == pcb->local_port) &&
+tcp.c:            (ip_addr_isany(&lpcb->local_ip) ||
+tcp.c:             ip_addr_cmp(&pcb->local_ip, &lpcb->local_ip))) {
+tcp.c:              lpcb->accepts_pending > 0);
+tcp.c:            lpcb->accepts_pending--;
+tcp.c:    if (pcb->refused_data != NULL) {
+tcp.c:      pbuf_free(pcb->refused_data);
+tcp.c:      pcb->refused_data = NULL;
+tcp.c:    if (pcb->unsent != NULL) {
+tcp.c:    if (pcb->unacked != NULL) {
+tcp.c:    if (pcb->ooseq != NULL) {
+tcp.c:    tcp_segs_free(pcb->ooseq);
+tcp.c:    pcb->ooseq = NULL;
+tcp.c:    pcb->rtime = -1;
+tcp.c:    tcp_segs_free(pcb->unsent);
+tcp.c:    tcp_segs_free(pcb->unacked);
+tcp.c:    pcb->unacked = pcb->unsent = NULL;
+tcp.c:    pcb->unsent_oversize = 0;
+tcp.c:  if (pcb->state != TIME_WAIT &&
+tcp.c:     pcb->state != LISTEN &&
+tcp.c:     pcb->flags & TF_ACK_DELAY) {
+tcp.c:    pcb->flags |= TF_ACK_NOW;
+tcp.c:  if (pcb->state != LISTEN) {
+tcp.c:    LWIP_ASSERT("unsent segments leaking", pcb->unsent == NULL);
+tcp.c:    LWIP_ASSERT("unacked segments leaking", pcb->unacked == NULL);
+tcp.c:    LWIP_ASSERT("ooseq segments leaking", pcb->ooseq == NULL);
+tcp.c:  pcb->state = CLOSED;
+tcp.c:  for(pcb = tcp_active_pcbs; pcb != NULL; pcb = pcb->next) {
+tcp.c:                       pcb->local_port, pcb->remote_port,
+tcp.c:                       pcb->snd_nxt, pcb->rcv_nxt));
+tcp.c:    tcp_debug_print_state(pcb->state);
+tcp.c:  for(pcb = (struct tcp_pcb *)tcp_listen_pcbs.pcbs; pcb != NULL; pcb = pcb->next) {
+tcp.c:                       pcb->local_port, pcb->remote_port,
+tcp.c:                       pcb->snd_nxt, pcb->rcv_nxt));
+tcp.c:    tcp_debug_print_state(pcb->state);
+tcp.c:  for(pcb = tcp_tw_pcbs; pcb != NULL; pcb = pcb->next) {
+tcp.c:                       pcb->local_port, pcb->remote_port,
+tcp.c:                       pcb->snd_nxt, pcb->rcv_nxt));
+tcp.c:    tcp_debug_print_state(pcb->state);
+tcp.c:  for(pcb = tcp_active_pcbs; pcb != NULL; pcb = pcb->next) {
+tcp.c:    LWIP_ASSERT("tcp_pcbs_sane: active pcb->state != CLOSED", pcb->state != CLOSED);
+tcp.c:    LWIP_ASSERT("tcp_pcbs_sane: active pcb->state != LISTEN", pcb->state != LISTEN);
+tcp.c:    LWIP_ASSERT("tcp_pcbs_sane: active pcb->state != TIME-WAIT", pcb->state != TIME_WAIT);
+tcp.c:  for(pcb = tcp_tw_pcbs; pcb != NULL; pcb = pcb->next) {
+tcp.c:    LWIP_ASSERT("tcp_pcbs_sane: tw pcb->state == TIME-WAIT", pcb->state == TIME_WAIT);
+tcp_in.c:  for(pcb = tcp_active_pcbs; pcb != NULL; pcb = pcb->next) {
+tcp_in.c:    LWIP_ASSERT("tcp_input: active pcb->state != CLOSED", pcb->state != CLOSED);
+tcp_in.c:    LWIP_ASSERT("tcp_input: active pcb->state != TIME-WAIT", pcb->state != TIME_WAIT);
+tcp_in.c:    LWIP_ASSERT("tcp_input: active pcb->state != LISTEN", pcb->state != LISTEN);
+tcp_in.c:    if (pcb->remote_port == tcphdr->src &&
+tcp_in.c:       pcb->local_port == tcphdr->dest &&
+tcp_in.c:       ip_addr_cmp(&(pcb->remote_ip), &current_iphdr_src) &&
+tcp_in.c:       ip_addr_cmp(&(pcb->local_ip), &current_iphdr_dest)) {
+tcp_in.c:      LWIP_ASSERT("tcp_input: pcb->next != pcb (before cache)", pcb->next != pcb);
+tcp_in.c:        prev->next = pcb->next;
+tcp_in.c:        pcb->next = tcp_active_pcbs;
+tcp_in.c:      LWIP_ASSERT("tcp_input: pcb->next != pcb (after cache)", pcb->next != pcb);
+tcp_in.c:    for(pcb = tcp_tw_pcbs; pcb != NULL; pcb = pcb->next) {
+tcp_in.c:      LWIP_ASSERT("tcp_input: TIME-WAIT pcb->state == TIME-WAIT", pcb->state == TIME_WAIT);
+tcp_in.c:      if (pcb->remote_port == tcphdr->src &&
+tcp_in.c:         pcb->local_port == tcphdr->dest &&
+tcp_in.c:         ip_addr_cmp(&(pcb->remote_ip), &current_iphdr_src) &&
+tcp_in.c:         ip_addr_cmp(&(pcb->local_ip), &current_iphdr_dest)) {
+tcp_in.c:    for(lpcb = tcp_listen_pcbs.listen_pcbs; lpcb != NULL; lpcb = lpcb->next) {
+tcp_in.c:      if (lpcb->local_port == tcphdr->dest) {
+tcp_in.c:        if (ip_addr_cmp(&(lpcb->local_ip), &current_iphdr_dest)) {
+tcp_in.c:        } else if(ip_addr_isany(&(lpcb->local_ip))) {
+tcp_in.c:        if (ip_addr_cmp(&(lpcb->local_ip), &current_iphdr_dest) ||
+tcp_in.c:            ip_addr_isany(&(lpcb->local_ip))) {
+tcp_in.c:        ((struct tcp_pcb_listen *)prev)->next = lpcb->next;
+tcp_in.c:        lpcb->next = tcp_listen_pcbs.listen_pcbs;
+tcp_in.c:    tcp_debug_print_state(pcb->state);
+tcp_in.c:    if (pcb->refused_data != NULL) {
+tcp_in.c:        ((pcb->refused_data != NULL) && (tcplen > 0))) {
+tcp_in.c:        TCP_EVENT_ERR(pcb->errf, pcb->callback_arg, ERR_RST);
+tcp_in.c:        if (!(pcb->flags & TF_RXCLOSED)) {
+tcp_in.c:          TCP_EVENT_ERR(pcb->errf, pcb->callback_arg, ERR_CLSD);
+tcp_in.c:        if (pcb->acked > 0) {
+tcp_in.c:          TCP_EVENT_SENT(pcb, pcb->acked, err);
+tcp_in.c:          LWIP_ASSERT("pcb->refused_data == NULL", pcb->refused_data == NULL);
+tcp_in.c:          if (pcb->flags & TF_RXCLOSED) {
+tcp_in.c:            pcb->refused_data = recv_data;
+tcp_in.c:          if (pcb->refused_data != NULL) {
+tcp_in.c:            pcb->refused_data->flags |= PBUF_FLAG_TCP_FIN;
+tcp_in.c:            if (pcb->rcv_wnd != TCP_WND) {
+tcp_in.c:              pcb->rcv_wnd++;
+tcp_in.c:        tcp_debug_print_state(pcb->state);
+tcp_in.c:    if (pcb->accepts_pending >= pcb->backlog) {
+tcp_in.c:    npcb = tcp_alloc(pcb->prio);
+tcp_in.c:    pcb->accepts_pending++;
+tcp_in.c:    ip_addr_copy(npcb->local_ip, current_iphdr_dest);
+tcp_in.c:    npcb->local_port = pcb->local_port;
+tcp_in.c:    ip_addr_copy(npcb->remote_ip, current_iphdr_src);
+tcp_in.c:    npcb->remote_port = tcphdr->src;
+tcp_in.c:    npcb->state = SYN_RCVD;
+tcp_in.c:    npcb->rcv_nxt = seqno + 1;
+tcp_in.c:    npcb->rcv_ann_right_edge = npcb->rcv_nxt;
+tcp_in.c:    npcb->snd_wnd = tcphdr->wnd;
+tcp_in.c:    npcb->snd_wnd_max = tcphdr->wnd;
+tcp_in.c:    npcb->ssthresh = npcb->snd_wnd;
+tcp_in.c:    npcb->snd_wl1 = seqno - 1;/* initialise to seqno-1 to force window update */
+tcp_in.c:    npcb->callback_arg = pcb->callback_arg;
+tcp_in.c:    npcb->accept = pcb->accept;
+tcp_in.c:    npcb->so_options = pcb->so_options & SOF_INHERITED;
+tcp_in.c:    npcb->mss = tcp_eff_send_mss(npcb->mss, &(npcb->remote_ip));
+tcp_in.c:    if (TCP_SEQ_BETWEEN(seqno, pcb->rcv_nxt, pcb->rcv_nxt+pcb->rcv_wnd)) {
+tcp_in.c:    pcb->tmr = tcp_ticks;
+tcp_in.c:    pcb->flags |= TF_ACK_NOW;
+tcp_in.c:    if (pcb->state == SYN_SENT) {
+tcp_in.c:      if (ackno == pcb->snd_nxt) {
+tcp_in.c:      if (TCP_SEQ_BETWEEN(seqno, pcb->rcv_nxt, 
+tcp_in.c:                          pcb->rcv_nxt+pcb->rcv_wnd)) {
+tcp_in.c:      LWIP_ASSERT("tcp_input: pcb->state != CLOSED", pcb->state != CLOSED);
+tcp_in.c:      pcb->flags &= ~TF_ACK_DELAY;
+tcp_in.c:       seqno, pcb->rcv_nxt));
+tcp_in.c:       seqno, pcb->rcv_nxt));
+tcp_in.c:  if ((flags & TCP_SYN) && (pcb->state != SYN_SENT && pcb->state != SYN_RCVD)) { 
+tcp_in.c:  if ((pcb->flags & TF_RXCLOSED) == 0) {
+tcp_in.c:    pcb->tmr = tcp_ticks;
+tcp_in.c:  pcb->keep_cnt_sent = 0;
+tcp_in.c:  switch (pcb->state) {
+tcp_in.c:    LWIP_DEBUGF(TCP_INPUT_DEBUG, ("SYN-SENT: ackno %"U32_F" pcb->snd_nxt %"U32_F" unacked %"U32_F"\n", ackno,
+tcp_in.c:     pcb->snd_nxt, ntohl(pcb->unacked->tcphdr->seqno)));
+tcp_in.c:        && ackno == ntohl(pcb->unacked->tcphdr->seqno) + 1) {
+tcp_in.c:      pcb->snd_buf++;
+tcp_in.c:      pcb->rcv_nxt = seqno + 1;
+tcp_in.c:      pcb->rcv_ann_right_edge = pcb->rcv_nxt;
+tcp_in.c:      pcb->lastack = ackno;
+tcp_in.c:      pcb->snd_wnd = tcphdr->wnd;
+tcp_in.c:      pcb->snd_wnd_max = tcphdr->wnd;
+tcp_in.c:      pcb->snd_wl1 = seqno - 1; /* initialise to seqno - 1 to force window update */
+tcp_in.c:      pcb->state = ESTABLISHED;
+tcp_in.c:      pcb->mss = tcp_eff_send_mss(pcb->mss, &(pcb->remote_ip));
+tcp_in.c:      /* Set ssthresh again after changing pcb->mss (already set in tcp_connect
+tcp_in.c:       * but for the default value of pcb->mss) */
+tcp_in.c:      pcb->ssthresh = pcb->mss * 10;
+tcp_in.c:      pcb->cwnd = ((pcb->cwnd == 1) ? (pcb->mss * 2) : pcb->mss);
+tcp_in.c:      LWIP_ASSERT("pcb->snd_queuelen > 0", (pcb->snd_queuelen > 0));
+tcp_in.c:      --pcb->snd_queuelen;
+tcp_in.c:      LWIP_DEBUGF(TCP_QLEN_DEBUG, ("tcp_process: SYN-SENT --queuelen %"U16_F"\n", (u16_t)pcb->snd_queuelen));
+tcp_in.c:      rseg = pcb->unacked;
+tcp_in.c:      pcb->unacked = rseg->next;
+tcp_in.c:      if(pcb->unacked == NULL)
+tcp_in.c:        pcb->rtime = -1;
+tcp_in.c:        pcb->rtime = 0;
+tcp_in.c:        pcb->nrtx = 0;
+tcp_in.c:      if (TCP_SEQ_BETWEEN(ackno, pcb->lastack+1, pcb->snd_nxt)) {
+tcp_in.c:        pcb->state = ESTABLISHED;
+tcp_in.c:        LWIP_ASSERT("pcb->accept != NULL", pcb->accept != NULL);
+tcp_in.c:        old_cwnd = pcb->cwnd;
+tcp_in.c:        if (pcb->acked != 0) {
+tcp_in.c:          pcb->acked--;
+tcp_in.c:        pcb->cwnd = ((old_cwnd == 1) ? (pcb->mss * 2) : pcb->mss);
+tcp_in.c:          pcb->state = CLOSE_WAIT;
+tcp_in.c:    } else if ((flags & TCP_SYN) && (seqno == pcb->rcv_nxt - 1)) {
+tcp_in.c:      pcb->state = CLOSE_WAIT;
+tcp_in.c:      if ((flags & TCP_ACK) && (ackno == pcb->snd_nxt)) {
+tcp_in.c:        pcb->state = TIME_WAIT;
+tcp_in.c:        pcb->state = CLOSING;
+tcp_in.c:    } else if ((flags & TCP_ACK) && (ackno == pcb->snd_nxt)) {
+tcp_in.c:      pcb->state = FIN_WAIT_2;
+tcp_in.c:      pcb->state = TIME_WAIT;
+tcp_in.c:    if (flags & TCP_ACK && ackno == pcb->snd_nxt) {
+tcp_in.c:      pcb->state = TIME_WAIT;
+tcp_in.c:    if (flags & TCP_ACK && ackno == pcb->snd_nxt) {
+tcp_in.c:      /* bugfix #21699: don't set pcb->state to CLOSED here or we risk leaking segments */
+tcp_in.c: * segment on any of the receive queues (pcb->recved or pcb->ooseq). If the segment
+tcp_in.c:  LWIP_ASSERT("tcp_receive: wrong state", pcb->state >= ESTABLISHED);
+tcp_in.c:    right_wnd_edge = pcb->snd_wnd + pcb->snd_wl2;
+tcp_in.c:    if (TCP_SEQ_LT(pcb->snd_wl1, seqno) ||
+tcp_in.c:       (pcb->snd_wl1 == seqno && TCP_SEQ_LT(pcb->snd_wl2, ackno)) ||
+tcp_in.c:       (pcb->snd_wl2 == ackno && tcphdr->wnd > pcb->snd_wnd)) {
+tcp_in.c:      pcb->snd_wnd = tcphdr->wnd;
+tcp_in.c:      if (pcb->snd_wnd_max < tcphdr->wnd) {
+tcp_in.c:        pcb->snd_wnd_max = tcphdr->wnd;
+tcp_in.c:      pcb->snd_wl1 = seqno;
+tcp_in.c:      pcb->snd_wl2 = ackno;
+tcp_in.c:      if (pcb->snd_wnd == 0) {
+tcp_in.c:        if (pcb->persist_backoff == 0) {
+tcp_in.c:          pcb->persist_cnt = 0;
+tcp_in.c:          pcb->persist_backoff = 1;
+tcp_in.c:      } else if (pcb->persist_backoff > 0) {
+tcp_in.c:          pcb->persist_backoff = 0;
+tcp_in.c:      LWIP_DEBUGF(TCP_WND_DEBUG, ("tcp_receive: window update %"U16_F"\n", pcb->snd_wnd));
+tcp_in.c:      if (pcb->snd_wnd != tcphdr->wnd) {
+tcp_in.c:                     pcb->lastack, ackno, pcb->snd_wl1, seqno, pcb->snd_wl2));
+tcp_in.c:    if (TCP_SEQ_LEQ(ackno, pcb->lastack)) {
+tcp_in.c:      pcb->acked = 0;
+tcp_in.c:        if (pcb->snd_wl2 + pcb->snd_wnd == right_wnd_edge){
+tcp_in.c:          if (pcb->rtime >= 0) {
+tcp_in.c:            if (pcb->lastack == ackno) {
+tcp_in.c:              if ((u8_t)(pcb->dupacks + 1) > pcb->dupacks) {
+tcp_in.c:                ++pcb->dupacks;
+tcp_in.c:              if (pcb->dupacks > 3) {
+tcp_in.c:                if ((u16_t)(pcb->cwnd + pcb->mss) > pcb->cwnd) {
+tcp_in.c:                  pcb->cwnd += pcb->mss;
+tcp_in.c:              } else if (pcb->dupacks == 3) {
+tcp_in.c:        pcb->dupacks = 0;
+tcp_in.c:    } else if (TCP_SEQ_BETWEEN(ackno, pcb->lastack+1, pcb->snd_nxt)){
+tcp_in.c:      if (pcb->flags & TF_INFR) {
+tcp_in.c:        pcb->flags &= ~TF_INFR;
+tcp_in.c:        pcb->cwnd = pcb->ssthresh;
+tcp_in.c:      pcb->nrtx = 0;
+tcp_in.c:      pcb->rto = (pcb->sa >> 3) + pcb->sv;
+tcp_in.c:      pcb->acked = (u16_t)(ackno - pcb->lastack);
+tcp_in.c:      pcb->snd_buf += pcb->acked;
+tcp_in.c:      pcb->dupacks = 0;
+tcp_in.c:      pcb->lastack = ackno;
+tcp_in.c:      if (pcb->state >= ESTABLISHED) {
+tcp_in.c:        if (pcb->cwnd < pcb->ssthresh) {
+tcp_in.c:          if ((u16_t)(pcb->cwnd + pcb->mss) > pcb->cwnd) {
+tcp_in.c:            pcb->cwnd += pcb->mss;
+tcp_in.c:          LWIP_DEBUGF(TCP_CWND_DEBUG, ("tcp_receive: slow start cwnd %"U16_F"\n", pcb->cwnd));
+tcp_in.c:          u16_t new_cwnd = (pcb->cwnd + pcb->mss * pcb->mss / pcb->cwnd);
+tcp_in.c:          if (new_cwnd > pcb->cwnd) {
+tcp_in.c:            pcb->cwnd = new_cwnd;
+tcp_in.c:          LWIP_DEBUGF(TCP_CWND_DEBUG, ("tcp_receive: congestion avoidance cwnd %"U16_F"\n", pcb->cwnd));
+tcp_in.c:                                    pcb->unacked != NULL?
+tcp_in.c:                                    ntohl(pcb->unacked->tcphdr->seqno): 0,
+tcp_in.c:                                    pcb->unacked != NULL?
+tcp_in.c:                                    ntohl(pcb->unacked->tcphdr->seqno) + TCP_TCPLEN(pcb->unacked): 0));
+tcp_in.c:      while (pcb->unacked != NULL &&
+tcp_in.c:             TCP_SEQ_LEQ(ntohl(pcb->unacked->tcphdr->seqno) +
+tcp_in.c:                         TCP_TCPLEN(pcb->unacked), ackno)) {
+tcp_in.c:        LWIP_DEBUGF(TCP_INPUT_DEBUG, ("tcp_receive: removing %"U32_F":%"U32_F" from pcb->unacked\n",
+tcp_in.c:                                      ntohl(pcb->unacked->tcphdr->seqno),
+tcp_in.c:                                      ntohl(pcb->unacked->tcphdr->seqno) +
+tcp_in.c:                                      TCP_TCPLEN(pcb->unacked)));
+tcp_in.c:        next = pcb->unacked;
+tcp_in.c:        pcb->unacked = pcb->unacked->next;
+tcp_in.c:        LWIP_DEBUGF(TCP_QLEN_DEBUG, ("tcp_receive: queuelen %"U16_F" ... ", (u16_t)pcb->snd_queuelen));
+tcp_in.c:        LWIP_ASSERT("pcb->snd_queuelen >= pbuf_clen(next->p)", (pcb->snd_queuelen >= pbuf_clen(next->p)));
+tcp_in.c:        if ((pcb->acked != 0) && ((TCPH_FLAGS(next->tcphdr) & TCP_FIN) != 0)) {
+tcp_in.c:          pcb->acked--;
+tcp_in.c:        pcb->snd_queuelen -= pbuf_clen(next->p);
+tcp_in.c:        LWIP_DEBUGF(TCP_QLEN_DEBUG, ("%"U16_F" (after freeing unacked)\n", (u16_t)pcb->snd_queuelen));
+tcp_in.c:        if (pcb->snd_queuelen != 0) {
+tcp_in.c:          LWIP_ASSERT("tcp_receive: valid queue length", pcb->unacked != NULL ||
+tcp_in.c:                      pcb->unsent != NULL);
+tcp_in.c:      if(pcb->unacked == NULL)
+tcp_in.c:        pcb->rtime = -1;
+tcp_in.c:        pcb->rtime = 0;
+tcp_in.c:      pcb->polltmr = 0;
+tcp_in.c:      pcb->acked = 0;
+tcp_in.c:    while (pcb->unsent != NULL &&
+tcp_in.c:           TCP_SEQ_BETWEEN(ackno, ntohl(pcb->unsent->tcphdr->seqno) + 
+tcp_in.c:                           TCP_TCPLEN(pcb->unsent), pcb->snd_nxt)) {
+tcp_in.c:      LWIP_DEBUGF(TCP_INPUT_DEBUG, ("tcp_receive: removing %"U32_F":%"U32_F" from pcb->unsent\n",
+tcp_in.c:                                    ntohl(pcb->unsent->tcphdr->seqno), ntohl(pcb->unsent->tcphdr->seqno) +
+tcp_in.c:                                    TCP_TCPLEN(pcb->unsent)));
+tcp_in.c:      next = pcb->unsent;
+tcp_in.c:      pcb->unsent = pcb->unsent->next;
+tcp_in.c:      if (pcb->unsent == NULL) {
+tcp_in.c:        pcb->unsent_oversize = 0;
+tcp_in.c:      LWIP_DEBUGF(TCP_QLEN_DEBUG, ("tcp_receive: queuelen %"U16_F" ... ", (u16_t)pcb->snd_queuelen));
+tcp_in.c:      LWIP_ASSERT("pcb->snd_queuelen >= pbuf_clen(next->p)", (pcb->snd_queuelen >= pbuf_clen(next->p)));
+tcp_in.c:      if ((pcb->acked != 0) && ((TCPH_FLAGS(next->tcphdr) & TCP_FIN) != 0)) {
+tcp_in.c:        pcb->acked--;
+tcp_in.c:      pcb->snd_queuelen -= pbuf_clen(next->p);
+tcp_in.c:      LWIP_DEBUGF(TCP_QLEN_DEBUG, ("%"U16_F" (after freeing unsent)\n", (u16_t)pcb->snd_queuelen));
+tcp_in.c:      if (pcb->snd_queuelen != 0) {
+tcp_in.c:          pcb->unacked != NULL || pcb->unsent != NULL);
+tcp_in.c:    LWIP_DEBUGF(TCP_RTO_DEBUG, ("tcp_receive: pcb->rttest %"U32_F" rtseq %"U32_F" ackno %"U32_F"\n",
+tcp_in.c:                                pcb->rttest, pcb->rtseq, ackno));
+tcp_in.c:    if (pcb->rttest && TCP_SEQ_LT(pcb->rtseq, ackno)) {
+tcp_in.c:      m = (s16_t)(tcp_ticks - pcb->rttest);
+tcp_in.c:      m = m - (pcb->sa >> 3);
+tcp_in.c:      pcb->sa += m;
+tcp_in.c:      m = m - (pcb->sv >> 2);
+tcp_in.c:      pcb->sv += m;
+tcp_in.c:      pcb->rto = (pcb->sa >> 3) + pcb->sv;
+tcp_in.c:                                  pcb->rto, pcb->rto * TCP_SLOW_INTERVAL));
+tcp_in.c:      pcb->rttest = 0;
+tcp_in.c:  if ((tcplen > 0) && (pcb->state < CLOSE_WAIT)) {
+tcp_in.c:    /*    if (TCP_SEQ_LT(seqno, pcb->rcv_nxt)){
+tcp_in.c:          if (TCP_SEQ_LT(pcb->rcv_nxt, seqno + tcplen)) {*/
+tcp_in.c:    if (TCP_SEQ_BETWEEN(pcb->rcv_nxt, seqno + 1, seqno + tcplen - 1)){
+tcp_in.c:      off = pcb->rcv_nxt - seqno;
+tcp_in.c:      inseg.len -= (u16_t)(pcb->rcv_nxt - seqno);
+tcp_in.c:      inseg.tcphdr->seqno = seqno = pcb->rcv_nxt;
+tcp_in.c:      if (TCP_SEQ_LT(seqno, pcb->rcv_nxt)){
+tcp_in.c:    if (TCP_SEQ_BETWEEN(seqno, pcb->rcv_nxt, 
+tcp_in.c:                        pcb->rcv_nxt + pcb->rcv_wnd - 1)){
+tcp_in.c:      if (pcb->rcv_nxt == seqno) {
+tcp_in.c:        if (tcplen > pcb->rcv_wnd) {
+tcp_in.c:                       seqno, tcplen, pcb->rcv_nxt + pcb->rcv_wnd));
+tcp_in.c:          inseg.len = pcb->rcv_wnd;
+tcp_in.c:                      (seqno + tcplen) == (pcb->rcv_nxt + pcb->rcv_wnd));
+tcp_in.c:        if (pcb->ooseq != NULL) {
+tcp_in.c:            while (pcb->ooseq != NULL) {
+tcp_in.c:              struct tcp_seg *old_ooseq = pcb->ooseq;
+tcp_in.c:              pcb->ooseq = pcb->ooseq->next;
+tcp_in.c:            next = pcb->ooseq;
+tcp_in.c:            pcb->ooseq = next;
+tcp_in.c:        pcb->rcv_nxt = seqno + tcplen;
+tcp_in.c:        LWIP_ASSERT("tcp_receive: tcplen > rcv_wnd\n", pcb->rcv_wnd >= tcplen);
+tcp_in.c:        pcb->rcv_wnd -= tcplen;
+tcp_in.c:        while (pcb->ooseq != NULL &&
+tcp_in.c:               pcb->ooseq->tcphdr->seqno == pcb->rcv_nxt) {
+tcp_in.c:          cseg = pcb->ooseq;
+tcp_in.c:          seqno = pcb->ooseq->tcphdr->seqno;
+tcp_in.c:          pcb->rcv_nxt += TCP_TCPLEN(cseg);
+tcp_in.c:                      pcb->rcv_wnd >= TCP_TCPLEN(cseg));
+tcp_in.c:          pcb->rcv_wnd -= TCP_TCPLEN(cseg);
+tcp_in.c:            if (pcb->state == ESTABLISHED) { /* force passive close or we can move to active close */
+tcp_in.c:              pcb->state = CLOSE_WAIT;
+tcp_in.c:          pcb->ooseq = cseg->next;
+tcp_in.c:        if (pcb->ooseq == NULL) {
+tcp_in.c:          pcb->ooseq = tcp_seg_copy(&inseg);
+tcp_in.c:          for(next = pcb->ooseq; next != NULL; next = next->next) {
+tcp_in.c:                    pcb->ooseq = cseg;
+tcp_in.c:                    pcb->ooseq = cseg;
+tcp_in.c:                  if ((u32_t)tcplen + seqno > pcb->rcv_nxt + (u32_t)pcb->rcv_wnd) {
+tcp_in.c:                                 seqno, tcplen, pcb->rcv_nxt + pcb->rcv_wnd));
+tcp_in.c:                    next->next->len = pcb->rcv_nxt + pcb->rcv_wnd - seqno;
+tcp_in.c:                                (seqno + tcplen) == (pcb->rcv_nxt + pcb->rcv_wnd));
+tcp_in.c:        for(next = pcb->ooseq; next != NULL; prev = next, next = next->next) {
+tcp_in.c:               pcb->ooseq = NULL;
+tcp_in.c:    /*if (TCP_SEQ_GT(pcb->rcv_nxt, seqno) ||
+tcp_in.c:      TCP_SEQ_GEQ(seqno, pcb->rcv_nxt + pcb->rcv_wnd)) {*/
+tcp_in.c:    if(!TCP_SEQ_BETWEEN(seqno, pcb->rcv_nxt, pcb->rcv_nxt + pcb->rcv_wnd-1)){
+tcp_in.c:        pcb->mss = ((mss > TCP_MSS) || (mss == 0)) ? TCP_MSS : mss;
+tcp_in.c:          pcb->ts_recent = ntohl(tsval);
+tcp_in.c:          pcb->flags |= TF_TIMESTAMP;
+tcp_in.c:        } else if (TCP_SEQ_BETWEEN(pcb->ts_lastacksent, seqno, seqno+tcplen)) {
+tcp_in.c:          pcb->ts_recent = ntohl(tsval);
+tcp_out.c:    tcphdr->src = htons(pcb->local_port);
+tcp_out.c:    tcphdr->dest = htons(pcb->remote_port);
+tcp_out.c:    tcphdr->ackno = htonl(pcb->rcv_nxt);
+tcp_out.c:    tcphdr->wnd = htons(pcb->rcv_ann_wnd);
+tcp_out.c:    pcb->rcv_ann_right_edge = pcb->rcv_nxt + pcb->rcv_ann_wnd;
+tcp_out.c:  if (pcb->unsent != NULL) {
+tcp_out.c:    for (last_unsent = pcb->unsent; last_unsent->next != NULL;
+tcp_out.c:      pcb->flags |= TF_FIN;
+tcp_out.c:  seg->tcphdr->src = htons(pcb->local_port);
+tcp_out.c:  seg->tcphdr->dest = htons(pcb->remote_port);
+tcp_out.c:        (!(pcb->flags & TF_NODELAY) &&
+tcp_out.c:          pcb->unsent != NULL ||
+tcp_out.c:          pcb->unacked != NULL))) {
+tcp_out.c:  if ((pcb->state != ESTABLISHED) &&
+tcp_out.c:      (pcb->state != CLOSE_WAIT) &&
+tcp_out.c:      (pcb->state != SYN_SENT) &&
+tcp_out.c:      (pcb->state != SYN_RCVD)) {
+tcp_out.c:  if (len > pcb->snd_buf) {
+tcp_out.c:      len, pcb->snd_buf));
+tcp_out.c:    pcb->flags |= TF_NAGLEMEMERR;
+tcp_out.c:  LWIP_DEBUGF(TCP_QLEN_DEBUG, ("tcp_write: queuelen: %"U16_F"\n", (u16_t)pcb->snd_queuelen));
+tcp_out.c:  if ((pcb->snd_queuelen >= TCP_SND_QUEUELEN) || (pcb->snd_queuelen > TCP_SNDQUEUELEN_OVERFLOW)) {
+tcp_out.c:      pcb->snd_queuelen, TCP_SND_QUEUELEN));
+tcp_out.c:    pcb->flags |= TF_NAGLEMEMERR;
+tcp_out.c:  if (pcb->snd_queuelen != 0) {
+tcp_out.c:      pcb->unacked != NULL || pcb->unsent != NULL);
+tcp_out.c:      pcb->unacked == NULL && pcb->unsent == NULL);
+tcp_out.c:  u16_t mss_local = LWIP_MIN(pcb->mss, pcb->snd_wnd_max/2);
+tcp_out.c:  queuelen = pcb->snd_queuelen;
+tcp_out.c:  if ((pcb->flags & TF_TIMESTAMP)) {
+tcp_out.c:   * 2. Chain a new pbuf to the end of pcb->unsent.
+tcp_out.c:   * queuelen = pcb->snd_queuelen
+tcp_out.c:   * oversize = pcb->unsent_oversize
+tcp_out.c:  if (pcb->unsent != NULL) {
+tcp_out.c:    for (last_unsent = pcb->unsent; last_unsent->next != NULL;
+tcp_out.c:    /* check that pcb->unsent_oversize matches last_unsent->unsent_oversize */
+tcp_out.c:                pcb->unsent_oversize == last_unsent->oversize_left);
+tcp_out.c:    oversize = pcb->unsent_oversize;
+tcp_out.c:     * Phase 2: Chain a new pbuf to the end of pcb->unsent.
+tcp_out.c:    LWIP_ASSERT("unsent_oversize mismatch (pcb->unsent is NULL)",
+tcp_out.c:                pcb->unsent_oversize == 0);
+tcp_out.c:   * variable, ready to be appended to pcb->unsent.
+tcp_out.c:    if ((seg = tcp_create_segment(pcb, p, 0, pcb->snd_lbb + pos, optflags)) == NULL) {
+tcp_out.c:  pcb->unsent_oversize = oversize;
+tcp_out.c:    LWIP_ASSERT("tcp_write: cannot concatenate when pcb->unsent is empty",
+tcp_out.c:   * Phase 3: Append queue to pcb->unsent. Queue may be NULL, but that
+tcp_out.c:    pcb->unsent = queue;
+tcp_out.c:  pcb->snd_lbb += len;
+tcp_out.c:  pcb->snd_buf -= len;
+tcp_out.c:  pcb->snd_queuelen = queuelen;
+tcp_out.c:    pcb->snd_queuelen));
+tcp_out.c:  if (pcb->snd_queuelen != 0) {
+tcp_out.c:                pcb->unacked != NULL || pcb->unsent != NULL);
+tcp_out.c:  pcb->flags |= TF_NAGLEMEMERR;
+tcp_out.c:  if (pcb->snd_queuelen != 0) {
+tcp_out.c:    LWIP_ASSERT("tcp_write: valid queue length", pcb->unacked != NULL ||
+tcp_out.c:      pcb->unsent != NULL);
+tcp_out.c:  LWIP_DEBUGF(TCP_QLEN_DEBUG | LWIP_DBG_STATE, ("tcp_write: %"S16_F" (with mem err)\n", pcb->snd_queuelen));
+tcp_out.c:  LWIP_DEBUGF(TCP_QLEN_DEBUG, ("tcp_enqueue_flags: queuelen: %"U16_F"\n", (u16_t)pcb->snd_queuelen));
+tcp_out.c:  if ((pcb->snd_queuelen >= TCP_SND_QUEUELEN) || (pcb->snd_queuelen > TCP_SNDQUEUELEN_OVERFLOW)) {
+tcp_out.c:                                       pcb->snd_queuelen, TCP_SND_QUEUELEN));
+tcp_out.c:    pcb->flags |= TF_NAGLEMEMERR;
+tcp_out.c:  if ((pcb->flags & TF_TIMESTAMP)) {
+tcp_out.c:  if (pcb->snd_buf == 0) {
+tcp_out.c:    pcb->flags |= TF_NAGLEMEMERR;
+tcp_out.c:  if ((seg = tcp_create_segment(pcb, p, flags, pcb->snd_lbb, optflags)) == NULL) {
+tcp_out.c:    pcb->flags |= TF_NAGLEMEMERR;
+tcp_out.c:  /* Now append seg to pcb->unsent queue */
+tcp_out.c:  if (pcb->unsent == NULL) {
+tcp_out.c:    pcb->unsent = seg;
+tcp_out.c:    for (useg = pcb->unsent; useg->next != NULL; useg = useg->next);
+tcp_out.c:  pcb->unsent_oversize = 0;
+tcp_out.c:    pcb->snd_lbb++;
+tcp_out.c:    pcb->snd_buf--;
+tcp_out.c:    pcb->flags |= TF_FIN;
+tcp_out.c:  pcb->snd_queuelen += pbuf_clen(seg->p);
+tcp_out.c:  LWIP_DEBUGF(TCP_QLEN_DEBUG, ("tcp_enqueue_flags: %"S16_F" (after enqueued)\n", pcb->snd_queuelen));
+tcp_out.c:  if (pcb->snd_queuelen != 0) {
+tcp_out.c:      pcb->unacked != NULL || pcb->unsent != NULL);
+tcp_out.c:  opts[2] = htonl(pcb->ts_recent);
+tcp_out.c:  if (pcb->flags & TF_TIMESTAMP) {
+tcp_out.c:  p = tcp_output_alloc_header(pcb, optlen, 0, htonl(pcb->snd_nxt));
+tcp_out.c:              ("tcp_output: sending ACK for %"U32_F"\n", pcb->rcv_nxt));
+tcp_out.c:  pcb->flags &= ~(TF_ACK_DELAY | TF_ACK_NOW);
+tcp_out.c:  pcb->ts_lastacksent = pcb->rcv_nxt;
+tcp_out.c:  if (pcb->flags & TF_TIMESTAMP) {
+tcp_out.c:  tcphdr->chksum = inet_chksum_pseudo(p, &(pcb->local_ip), &(pcb->remote_ip),
+tcp_out.c:  ip_output_hinted(p, &(pcb->local_ip), &(pcb->remote_ip), pcb->ttl, pcb->tos,
+tcp_out.c:      IP_PROTO_TCP, &(pcb->addr_hint));
+tcp_out.c:  ip_output(p, &(pcb->local_ip), &(pcb->remote_ip), pcb->ttl, pcb->tos,
+tcp_out.c:  /* pcb->state LISTEN not allowed here */
+tcp_out.c:    pcb->state != LISTEN);
+tcp_out.c:  wnd = LWIP_MIN(pcb->snd_wnd, pcb->cwnd);
+tcp_out.c:  seg = pcb->unsent;
+tcp_out.c:  if (pcb->flags & TF_ACK_NOW &&
+tcp_out.c:      ntohl(seg->tcphdr->seqno) - pcb->lastack + seg->len > wnd)) {
+tcp_out.c:  useg = pcb->unacked;
+tcp_out.c:                                   (void*)pcb->unsent));
+tcp_out.c:                                 pcb->snd_wnd, pcb->cwnd, wnd, pcb->lastack));
+tcp_out.c:                 pcb->snd_wnd, pcb->cwnd, wnd,
+tcp_out.c:                 ntohl(seg->tcphdr->seqno) - pcb->lastack + seg->len,
+tcp_out.c:                 ntohl(seg->tcphdr->seqno), pcb->lastack));
+tcp_out.c:         ntohl(seg->tcphdr->seqno) - pcb->lastack + seg->len <= wnd) {
+tcp_out.c:     *   either seg->next != NULL or pcb->unacked == NULL;
+tcp_out.c:      ((pcb->flags & (TF_NAGLEMEMERR | TF_FIN)) == 0)){
+tcp_out.c:                            pcb->snd_wnd, pcb->cwnd, wnd,
+tcp_out.c:                            pcb->lastack,
+tcp_out.c:                            ntohl(seg->tcphdr->seqno), pcb->lastack, i));
+tcp_out.c:    pcb->unsent = seg->next;
+tcp_out.c:    if (pcb->state != SYN_SENT) {
+tcp_out.c:      pcb->flags &= ~(TF_ACK_DELAY | TF_ACK_NOW);
+tcp_out.c:    if (TCP_SEQ_LT(pcb->snd_nxt, snd_nxt)) {
+tcp_out.c:      pcb->snd_nxt = snd_nxt;
+tcp_out.c:      if (pcb->unacked == NULL) {
+tcp_out.c:        pcb->unacked = seg;
+tcp_out.c:          struct tcp_seg **cur_seg = &(pcb->unacked);
+tcp_out.c:    seg = pcb->unsent;
+tcp_out.c:  if (pcb->unsent == NULL) {
+tcp_out.c:    pcb->unsent_oversize = 0;
+tcp_out.c:  pcb->flags &= ~TF_NAGLEMEMERR;
+tcp_out.c:  seg->tcphdr->ackno = htonl(pcb->rcv_nxt);
+tcp_out.c:  seg->tcphdr->wnd = htons(pcb->rcv_ann_wnd);
+tcp_out.c:  pcb->rcv_ann_right_edge = pcb->rcv_nxt + pcb->rcv_ann_wnd;
+tcp_out.c:    mss = tcp_eff_send_mss(TCP_MSS, &pcb->remote_ip);
+tcp_out.c:  pcb->ts_lastacksent = pcb->rcv_nxt;
+tcp_out.c:  if (pcb->rtime == -1) {
+tcp_out.c:    pcb->rtime = 0;
+tcp_out.c:  if (ip_addr_isany(&(pcb->local_ip))) {
+tcp_out.c:    netif = ip_route(&(pcb->remote_ip));
+tcp_out.c:    ip_addr_copy(pcb->local_ip, netif->ip_addr);
+tcp_out.c:  if (pcb->rttest == 0) {
+tcp_out.c:    pcb->rttest = tcp_ticks;
+tcp_out.c:    pcb->rtseq = ntohl(seg->tcphdr->seqno);
+tcp_out.c:    LWIP_DEBUGF(TCP_RTO_DEBUG, ("tcp_output_segment: rtseq %"U32_F"\n", pcb->rtseq));
+tcp_out.c:    u16_t chksum_slow = inet_chksum_pseudo(seg->p, &(pcb->local_ip),
+tcp_out.c:           &(pcb->remote_ip),
+tcp_out.c:    acc = inet_chksum_pseudo_partial(seg->p, &(pcb->local_ip),
+tcp_out.c:             &(pcb->remote_ip),
+tcp_out.c:  seg->tcphdr->chksum = inet_chksum_pseudo(seg->p, &(pcb->local_ip),
+tcp_out.c:         &(pcb->remote_ip),
+tcp_out.c:  ip_output_hinted(seg->p, &(pcb->local_ip), &(pcb->remote_ip), pcb->ttl, pcb->tos,
+tcp_out.c:      IP_PROTO_TCP, &(pcb->addr_hint));
+tcp_out.c:  ip_output(seg->p, &(pcb->local_ip), &(pcb->remote_ip), pcb->ttl, pcb->tos,
+tcp_out.c:  if (pcb->unacked == NULL) {
+tcp_out.c:  for (seg = pcb->unacked; seg->next != NULL; seg = seg->next);
+tcp_out.c:  seg->next = pcb->unsent;
+tcp_out.c:  pcb->unsent = pcb->unacked;
+tcp_out.c:  pcb->unacked = NULL;
+tcp_out.c:  ++pcb->nrtx;
+tcp_out.c:  pcb->rttest = 0;
+tcp_out.c:  if (pcb->unacked == NULL) {
+tcp_out.c:  seg = pcb->unacked;
+tcp_out.c:  pcb->unacked = seg->next;
+tcp_out.c:  cur_seg = &(pcb->unsent);
+tcp_out.c:    pcb->unsent_oversize = 0;
+tcp_out.c:  ++pcb->nrtx;
+tcp_out.c:  pcb->rttest = 0;
+tcp_out.c:  if (pcb->unacked != NULL && !(pcb->flags & TF_INFR)) {
+tcp_out.c:                 (u16_t)pcb->dupacks, pcb->lastack,
+tcp_out.c:                 ntohl(pcb->unacked->tcphdr->seqno)));
+tcp_out.c:    if (pcb->cwnd > pcb->snd_wnd) {
+tcp_out.c:      pcb->ssthresh = pcb->snd_wnd / 2;
+tcp_out.c:      pcb->ssthresh = pcb->cwnd / 2;
+tcp_out.c:    if (pcb->ssthresh < 2*pcb->mss) {
+tcp_out.c:                   pcb->ssthresh, 2*pcb->mss));
+tcp_out.c:      pcb->ssthresh = 2*pcb->mss;
+tcp_out.c:    pcb->cwnd = pcb->ssthresh + 3 * pcb->mss;
+tcp_out.c:    pcb->flags |= TF_INFR;
+tcp_out.c:                          ip4_addr1_16(&pcb->remote_ip), ip4_addr2_16(&pcb->remote_ip),
+tcp_out.c:                          ip4_addr3_16(&pcb->remote_ip), ip4_addr4_16(&pcb->remote_ip)));
+tcp_out.c:  LWIP_DEBUGF(TCP_DEBUG, ("tcp_keepalive: tcp_ticks %"U32_F"   pcb->tmr %"U32_F" pcb->keep_cnt_sent %"U16_F"\n", 
+tcp_out.c:                          tcp_ticks, pcb->tmr, pcb->keep_cnt_sent));
+tcp_out.c:  p = tcp_output_alloc_header(pcb, 0, 0, htonl(pcb->snd_nxt - 1));
+tcp_out.c:  tcphdr->chksum = inet_chksum_pseudo(p, &pcb->local_ip, &pcb->remote_ip,
+tcp_out.c:  ip_output_hinted(p, &pcb->local_ip, &pcb->remote_ip, pcb->ttl, 0, IP_PROTO_TCP,
+tcp_out.c:    &(pcb->addr_hint));
+tcp_out.c:  ip_output(p, &pcb->local_ip, &pcb->remote_ip, pcb->ttl, 0, IP_PROTO_TCP);
+tcp_out.c:                          pcb->snd_nxt - 1, pcb->rcv_nxt));
+tcp_out.c:               ip4_addr1_16(&pcb->remote_ip), ip4_addr2_16(&pcb->remote_ip),
+tcp_out.c:               ip4_addr3_16(&pcb->remote_ip), ip4_addr4_16(&pcb->remote_ip)));
+tcp_out.c:               "   pcb->tmr %"U32_F" pcb->keep_cnt_sent %"U16_F"\n", 
+tcp_out.c:               tcp_ticks, pcb->tmr, pcb->keep_cnt_sent));
+tcp_out.c:  seg = pcb->unacked;
+tcp_out.c:    seg = pcb->unsent;
+tcp_out.c:  tcphdr->chksum = inet_chksum_pseudo(p, &pcb->local_ip, &pcb->remote_ip,
+tcp_out.c:  ip_output_hinted(p, &pcb->local_ip, &pcb->remote_ip, pcb->ttl, 0, IP_PROTO_TCP,
+tcp_out.c:    &(pcb->addr_hint));
+tcp_out.c:  ip_output(p, &pcb->local_ip, &pcb->remote_ip, pcb->ttl, 0, IP_PROTO_TCP);
+tcp_out.c:                          pcb->snd_nxt - 1, pcb->rcv_nxt));
+udp.c:  for(pcb = udp_pcbs; pcb != NULL; pcb = pcb->next) {
+udp.c:    if (pcb->local_port == udp_port) {
+udp.c:    if (ipcb->local_port == udp_port) {
+udp.c:      ipcb = ipcb->next;
+udp.c:           - inp->dhcp->pcb->remote == ANY or iphdr->src */
+udp.c:        if ((ip_addr_isany(&inp->dhcp->pcb->remote_ip) ||
+udp.c:           ip_addr_cmp(&(inp->dhcp->pcb->remote_ip), &current_iphdr_src))) {
+udp.c:    for (pcb = udp_pcbs; pcb != NULL; pcb = pcb->next) {
+udp.c:                   ip4_addr1_16(&pcb->local_ip), ip4_addr2_16(&pcb->local_ip),
+udp.c:                   ip4_addr3_16(&pcb->local_ip), ip4_addr4_16(&pcb->local_ip), pcb->local_port,
+udp.c:                   ip4_addr1_16(&pcb->remote_ip), ip4_addr2_16(&pcb->remote_ip),
+udp.c:                   ip4_addr3_16(&pcb->remote_ip), ip4_addr4_16(&pcb->remote_ip), pcb->remote_port));
+udp.c:      if (pcb->local_port == dest) {
+udp.c:           (!broadcast && ip_addr_isany(&pcb->local_ip)) ||
+udp.c:           ip_addr_cmp(&(pcb->local_ip), &current_iphdr_dest) ||
+udp.c:             (ip_addr_isany(&pcb->local_ip) ||
+udp.c:              ip_addr_netcmp(&pcb->local_ip, ip_current_dest_addr(), &inp->netmask)))) {
+udp.c:             (ip_addr_isany(&pcb->local_ip) ||
+udp.c:              ip_addr_netcmp(&pcb->local_ip, ip_current_dest_addr(), &inp->netmask)))) {
+udp.c:              ((pcb->flags & UDP_FLAGS_CONNECTED) == 0)) {
+udp.c:          (pcb->remote_port == src) &&
+udp.c:          (ip_addr_isany(&pcb->remote_ip) ||
+udp.c:           ip_addr_cmp(&(pcb->remote_ip), &current_iphdr_src))) {
+udp.c:          prev->next = pcb->next;
+udp.c:          pcb->next = udp_pcbs;
+udp.c:        for (mpcb = udp_pcbs; mpcb != NULL; mpcb = mpcb->next) {
+udp.c:            if ((mpcb->local_port == dest) &&
+udp.c:                ((!broadcast && ip_addr_isany(&mpcb->local_ip)) ||
+udp.c:                 ip_addr_cmp(&(mpcb->local_ip), &current_iphdr_dest) ||
+udp.c:              if (mpcb->recv != NULL) {
+udp.c:                    mpcb->recv(mpcb->recv_arg, mpcb, q, ip_current_src_addr(), src);
+udp.c:      if (pcb->recv != NULL) {
+udp.c:        pcb->recv(pcb->recv_arg, pcb, p, ip_current_src_addr(), src);
+udp.c:  return udp_sendto(pcb, p, &pcb->remote_ip, pcb->remote_port);
+udp.c:  return udp_sendto_chksum(pcb, p, &pcb->remote_ip, pcb->remote_port,
+udp.c:  netif = ip_route((ip_addr_ismulticast(dst_ip))?(&(pcb->multicast_ip)):(dst_ip));
+udp.c:  if (pcb->local_port == 0) {
+udp.c:    err = udp_bind(pcb, &pcb->local_ip, pcb->local_port);
+udp.c:  udphdr->src = htons(pcb->local_port);
+udp.c:  if (ip_addr_ismulticast(dst_ip) && ((pcb->flags & UDP_FLAGS_MULTICAST_LOOP) != 0)) {
+udp.c:  if (ip_addr_isany(&pcb->local_ip)) {
+udp.c:    if (!ip_addr_cmp(&(pcb->local_ip), &(netif->ip_addr))) {
+udp.c:    src_ip = &(pcb->local_ip);
+udp.c:  if (pcb->flags & UDP_FLAGS_UDPLITE) {
+udp.c:    chklen_hdr = chklen = pcb->chksum_len_tx;
+udp.c:        LWIP_DEBUGF(UDP_DEBUG, ("udp_send: UDP LITE pcb->chksum_len is illegal: %"U16_F"\n", chklen));
+udp.c:    NETIF_SET_HWADDRHINT(netif, &pcb->addr_hint);
+udp.c:    err = ip_output_if(q, src_ip, dst_ip, pcb->ttl, pcb->tos, IP_PROTO_UDPLITE, netif);
+udp.c:    if ((pcb->flags & UDP_FLAGS_NOCHKSUM) == 0) {
+udp.c:    NETIF_SET_HWADDRHINT(netif, &pcb->addr_hint);
+udp.c:    err = ip_output_if(q, src_ip, dst_ip, pcb->ttl, pcb->tos, IP_PROTO_UDP, netif);
+udp.c:  for (ipcb = udp_pcbs; ipcb != NULL; ipcb = ipcb->next) {
+udp.c:      if ((ipcb->local_port == port) &&
+udp.c:          (ip_addr_isany(&(ipcb->local_ip)) ||
+udp.c:           ip_addr_cmp(&(ipcb->local_ip), ipaddr))) {
+udp.c:  ip_addr_set(&pcb->local_ip, ipaddr);
+udp.c:  pcb->local_port = port;
+udp.c:    pcb->next = udp_pcbs;
+udp.c:               ip4_addr1_16(&pcb->local_ip), ip4_addr2_16(&pcb->local_ip),
+udp.c:               ip4_addr3_16(&pcb->local_ip), ip4_addr4_16(&pcb->local_ip),
+udp.c:               pcb->local_port));
+udp.c:  if (pcb->local_port == 0) {
+udp.c:    err_t err = udp_bind(pcb, &pcb->local_ip, pcb->local_port);
+udp.c:  ip_addr_set(&pcb->remote_ip, ipaddr);
+udp.c:  pcb->remote_port = port;
+udp.c:  pcb->flags |= UDP_FLAGS_CONNECTED;
+udp.c:  if (ip_addr_isany(&pcb->local_ip) && !ip_addr_isany(&pcb->remote_ip)) {
+udp.c:    if ((netif = ip_route(&(pcb->remote_ip))) == NULL) {
+udp.c:      LWIP_DEBUGF(UDP_DEBUG, ("udp_connect: No route to 0x%lx\n", pcb->remote_ip.addr));
+udp.c:    pcb->local_ip = netif->ip_addr;
+udp.c:  } else if (ip_addr_isany(&pcb->remote_ip)) {
+udp.c:    pcb->local_ip.addr = 0;
+udp.c:               ip4_addr1_16(&pcb->local_ip), ip4_addr2_16(&pcb->local_ip),
+udp.c:               ip4_addr3_16(&pcb->local_ip), ip4_addr4_16(&pcb->local_ip),
+udp.c:               pcb->local_port));
+udp.c:  for (ipcb = udp_pcbs; ipcb != NULL; ipcb = ipcb->next) {
+udp.c:  pcb->next = udp_pcbs;
+udp.c:  ip_addr_set_any(&pcb->remote_ip);
+udp.c:  pcb->remote_port = 0;
+udp.c:  pcb->flags &= ~UDP_FLAGS_CONNECTED;
+udp.c:  pcb->recv = recv;
+udp.c:  pcb->recv_arg = recv_arg;
+udp.c:        pcb2->next = pcb->next;
+udp.c:    pcb->ttl = UDP_TTL;
