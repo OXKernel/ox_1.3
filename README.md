@@ -1,4 +1,4 @@
-# Project Title
+# OX Kernel
 
 OX is a simple embeddable kernel released under the GPL. This
 version contains LWIP networking code, but this has not been
